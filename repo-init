@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+
+readonly GH_USER="jottr"
+readonly GH_REPO="bootstrap"
+readonly REPO_NAME="${1:-bootstrap}"
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "Error: GitHub CLI is not installed"
+  exit 1
+fi
+
+# Clone the repository using GitHub CLI
+if ! gh repo clone "${GH_USER}/${GH_REPO}" "${REPO_NAME}"; then
+  echo "Error: Failed to clone the repository"
+  exit 1
+fi
+
+if ! cd "${REPO_NAME}"; then
+  echo "Error: Failed to change directory to ${REPO_NAME}"
+  exit 1
+fi
+
+if ! rm -rf .git; then
+  echo "Error: Failed to remove the Git repository"
+  exit 1
+fi
+
+if ! rm -rf repo-init; then
+  echo "Error: Failed to remove the repo-init script"
+  exit 1
+fi
+
+# Initialize the repository
+if ! git init; then
+  echo "Error: Failed to initialize the repository"
+  exit 1
+fi
+
