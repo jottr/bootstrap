@@ -1,10 +1,8 @@
----
-
 yaml-files:
   - '*.yaml'
   - '*.yml'
   - '.yamllint'
-
+ignore: []
 rules:
   braces:
     min-spaces-inside: 0 # yamllint defaults to 0
@@ -34,6 +32,3 @@ rules:
   trailing-spaces: enable
   truthy:
     level: warning
-
-ignore:
- 
