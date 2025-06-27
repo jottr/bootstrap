@@ -15,5 +15,3 @@ This will bootstrap the repo with the name "foo":
 ```bash
 ./repo-init foo
 ```
-
-
