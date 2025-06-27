@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -eou pipefail
 
-
 readonly GH_USER="jottr"
 readonly GH_REPO="bootstrap"
 readonly REPO_NAME="${1:-bootstrap}"
@@ -22,13 +21,14 @@ if ! cd "${REPO_NAME}"; then
   exit 1
 fi
 
-if ! rm -rf .git; then
+if [ -d ".git" ] && ! rm -rf .git; then
   echo "Error: Failed to remove the Git repository"
   exit 1
 fi
 
-if ! rm -rf repo-init; then
-  echo "Error: Failed to remove the repo-init script"
+# Remove the repo-init script from the new repository directory
+if ! rm "repo-init"; then
+  echo "Error: Failed to remove the repo-init script from the new repository"
   exit 1
 fi
 
@@ -37,4 +37,3 @@ if ! git init; then
   echo "Error: Failed to initialize the repository"
   exit 1
 fi
-
