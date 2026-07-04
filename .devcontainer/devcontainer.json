@@ -1,8 +1,13 @@
 {
   "name": "bootstrap",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+  },
   "mounts": [
-    "source=/run/host-services/ssh-auth.sock,target=/run/host-services/ssh-auth.sock,type=bind"
+    "source=/run/host-services/ssh-auth.sock,target=/run/host-services/ssh-auth.sock,type=bind",
+    "source=claude-code-home,target=/home/vscode/.claude,type=volume",
+    "source=${localEnv:HOME}/.dotfiles/docs,target=/home/vscode/.dotfiles/docs,type=bind,readonly"
   ],
   "containerEnv": {
     "SSH_AUTH_SOCK": "/run/host-services/ssh-auth.sock"

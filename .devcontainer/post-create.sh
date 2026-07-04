@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# The claude-code-home volume is created root-owned; claude needs to write
+# credentials and settings there. Shared across all bootstrapped projects so
+# login happens once.
+sudo chown "$(id -u):$(id -g)" "${HOME}/.claude"
+
 readonly GIT_NAME="jottr"
 readonly GIT_EMAIL="jottr@users.noreply.github.com"
 readonly SIGNING_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFglxwz2ynsETQlG4A3MKDUpM4D91JKvjDqAmiO1bQow"
@@ -29,6 +34,14 @@ git config --global --add safe.directory '*'
 # Repos are cloned via HTTPS on the host; inside the container all GitHub
 # access goes over SSH through the forwarded agent.
 git config --global url."git@github.com:".insteadOf "https://github.com/"
+
+# Same session-start directive as the host's global CLAUDE.md; the learnings
+# file itself is bind-mounted read-only from the host dotfiles repo.
+cat > "${HOME}/.claude/CLAUDE.md" <<'EOF'
+# Global Claude Instructions
+
+Read `@~/.dotfiles/docs/general-learnings.md` at the start of every session. It contains cross-project preferences, recurring mistakes to avoid, and general working strategies. Apply them throughout the session.
+EOF
 
 # Trust GitHub host keys for SSH remotes.
 mkdir -p ~/.ssh
