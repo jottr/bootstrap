@@ -43,6 +43,27 @@ cat > "${HOME}/.claude/CLAUDE.md" <<'EOF'
 Read `@~/.dotfiles/docs/general-learnings.md` at the start of every session. It contains cross-project preferences, recurring mistakes to avoid, and general working strategies. Apply them throughout the session.
 EOF
 
+# Pre-complete Claude Code's first-run gates so an interactive `claude` (e.g.
+# `just claude`) starts straight in, authenticating from CLAUDE_CODE_OAUTH_TOKEN
+# (devcontainer remoteEnv) instead of dropping to the onboarding/trust screen.
+# These flags live in ~/.claude.json, which sits on the container layer — NOT the
+# mounted ~/.claude volume — so they must be re-seeded on every create. Both the
+# global onboarding flag AND the per-project trust flags are required; a
+# non-interactive token login sets neither. Merge-safe and idempotent.
+node -e '
+  const fs = require("fs");
+  const path = process.env.HOME + "/.claude.json";
+  let data = {};
+  try { data = JSON.parse(fs.readFileSync(path, "utf8")); } catch {}
+  data.hasCompletedOnboarding = true;
+  const ws = process.cwd();
+  data.projects = data.projects || {};
+  data.projects[ws] = data.projects[ws] || {};
+  data.projects[ws].hasTrustDialogAccepted = true;
+  data.projects[ws].hasCompletedProjectOnboarding = true;
+  fs.writeFileSync(path, JSON.stringify(data, null, 2));
+'
+
 # Trust GitHub host keys for SSH remotes.
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh

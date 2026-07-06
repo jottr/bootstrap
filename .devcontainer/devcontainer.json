@@ -12,5 +12,8 @@
   "containerEnv": {
     "SSH_AUTH_SOCK": "/run/host-services/ssh-auth.sock"
   },
+  "remoteEnv": {
+    "CLAUDE_CODE_OAUTH_TOKEN": "${localEnv:CLAUDE_CODE_OAUTH_TOKEN}"
+  },
   "postCreateCommand": ".devcontainer/post-create.sh"
 }
