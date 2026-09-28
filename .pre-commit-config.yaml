@@ -1,5 +1,7 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+# Hooks with no stages list run at pre-commit only; gitlint sets commit-msg itself.
+default_stages: [pre-commit]
 repos:
   - repo: meta
     hooks:
@@ -46,3 +48,21 @@ repos:
       - id: tofu-fmt
       - id: tofu-validate
       - id: tflint
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      # Uses the gitleaks from packages.yaml; no Go toolchain download.
+      - id: gitleaks-system
+        pass_filenames: false  # it scans the staged diff; filenames break its CLI
+
+  - repo: local
+    hooks:
+      - id: op-references-only
+        name: secrets.env holds only op:// references
+        language: system
+        files: (^|/)secrets\.env$
+        # Reports file:line only, never the offending value.
+        entry: >-
+          sh -c 'bad=$(grep -HnvE "^[[:space:]]*((export[[:space:]]+)?[A-Za-z_][A-Za-z0-9_]*=[\"'\'']?op://|#|$)" "$@" | cut -d: -f1-2);
+          [ -z "$bad" ] || { printf "%s: not an op:// reference\n" $bad >&2; exit 1; }' --
