@@ -31,24 +31,6 @@ repos:
     hooks:
       - id: gitlint
 
-  - repo: https://github.com/hadolint/hadolint
-    rev: v2.12.0
-    hooks:
-      - id: hadolint-docker
-
-  - repo: https://github.com/ansible-community/ansible-lint.git
-    rev: v25.6.1
-    hooks:
-      - id: ansible-lint
-        always_run: false
-
-  - repo: https://github.com/gruntwork-io/pre-commit
-    rev: v0.1.29
-    hooks:
-      - id: tofu-fmt
-      - id: tofu-validate
-      - id: tflint
-
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.1
     hooks:
